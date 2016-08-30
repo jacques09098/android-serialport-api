@@ -124,17 +124,27 @@ JNIEXPORT jobject JNICALL Java_android_1serialport_1api_SerialPort_open
 		cfsetospeed(&cfg, speed);
 
 		if( parity== android_serialport_api_SerialPort_PARITY_ODD){  //parity ODD
+			LOGD("Setting parity ODD");
 			cfg.c_cflag |= PARENB;
 			cfg.c_cflag |= PARODD;
 			cfg.c_iflag |= (INPCK | ISTRIP);
 		}else if( parity == android_serialport_api_SerialPort_PARITY_EVEN){ //parity EVEN
+			LOGD("Setting parity EVEN");
 			cfg.c_iflag |= (INPCK | ISTRIP);
 			cfg.c_cflag |= PARENB;
-			cfg.c_cflag |= ~PARODD;
+			cfg.c_cflag &= ~PARODD;
 		}else if( parity == android_serialport_api_SerialPort_PARITY_NONE){  //No parity
+			LOGD("Setting parity NONE");
 			cfg.c_cflag &= ~PARENB;
-			cfg.c_cflag &= ~CSTOPB;
 		}
+
+
+		//Stop bit 1
+		cfg.c_cflag &= ~CSTOPB;
+
+		//8 bit
+		cfg.c_cflag &= ~CSIZE;
+		cfg.c_cflag |= CS8;
 
 		if (tcsetattr(fd, TCSANOW, &cfg))
 		{
