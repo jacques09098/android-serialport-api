@@ -74,7 +74,7 @@ static speed_t getBaudrate(jint baudrate)
  * Signature: (Ljava/lang/String;II)Ljava/io/FileDescriptor;
  */
 JNIEXPORT jobject JNICALL Java_android_1serialport_1api_SerialPort_open
-  (JNIEnv *env, jclass thiz, jstring path, jint baudrate, jint flags)
+  (JNIEnv *env, jclass thiz, jstring path, jint baudrate, jint flags, jint parity)
 {
 	int fd;
 	speed_t speed;
@@ -122,6 +122,19 @@ JNIEXPORT jobject JNICALL Java_android_1serialport_1api_SerialPort_open
 		cfmakeraw(&cfg);
 		cfsetispeed(&cfg, speed);
 		cfsetospeed(&cfg, speed);
+
+		if( parity== android_serialport_api_SerialPort_PARITY_ODD){  //parity ODD
+			cfg.c_cflag |= PARENB;
+			cfg.c_cflag |= PARODD;
+			cfg.c_iflag |= (INPCK | ISTRIP);
+		}else if( parity == android_serialport_api_SerialPort_PARITY_EVEN){ //parity EVEN
+			cfg.c_iflag |= (INPCK | ISTRIP);
+			cfg.c_cflag |= PARENB;
+			cfg.c_cflag |= ~PARODD;
+		}else if( parity == android_serialport_api_SerialPort_PARITY_NONE){  //No parity
+			cfg.c_cflag &= ~PARENB;
+			cfg.c_cflag &= ~CSTOPB;
+		}
 
 		if (tcsetattr(fd, TCSANOW, &cfg))
 		{

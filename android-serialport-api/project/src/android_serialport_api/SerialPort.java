@@ -30,6 +30,10 @@ public class SerialPort {
 
 	private static final String TAG = "SerialPort";
 
+	public static final int PARITY_NONE = 0;
+	public static final int PARITY_ODD = 1;
+	public static final int PARITY_EVEN = 2;
+
 	/*
 	 * Do not remove or rename the field mFd: it is used by native method close();
 	 */
@@ -37,7 +41,12 @@ public class SerialPort {
 	private FileInputStream mFileInputStream;
 	private FileOutputStream mFileOutputStream;
 
+
 	public SerialPort(File device, int baudrate, int flags) throws SecurityException, IOException {
+		this(device,baudrate,flags,PARITY_NONE);
+	}
+
+	public SerialPort(File device, int baudrate, int flags, int parity) throws SecurityException, IOException {
 
 		/* Check access permission */
 		if (!device.canRead() || !device.canWrite()) {
@@ -58,7 +67,7 @@ public class SerialPort {
 			}
 		}
 
-		mFd = open(device.getAbsolutePath(), baudrate, flags);
+		mFd = open(device.getAbsolutePath(), baudrate, flags, parity);
 		if (mFd == null) {
 			Log.e(TAG, "native open returns null");
 			throw new IOException();
@@ -77,7 +86,7 @@ public class SerialPort {
 	}
 
 	// JNI
-	private native static FileDescriptor open(String path, int baudrate, int flags);
+	private native static FileDescriptor open(String path, int baudrate, int flags, int parity);
 	public native void close();
 	static {
 		System.loadLibrary("serial_port");

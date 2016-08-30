@@ -7,13 +7,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef android_serialport_api_SerialPort_PARITY_NONE
+#define android_serialport_api_SerialPort_PARITY_NONE 0L
+#undef android_serialport_api_SerialPort_PARITY_ODD
+#define android_serialport_api_SerialPort_PARITY_ODD 1L
+#undef android_serialport_api_SerialPort_PARITY_EVEN
+#define android_serialport_api_SerialPort_PARITY_EVEN 2L
 /*
  * Class:     android_serialport_api_SerialPort
  * Method:    open
- * Signature: (Ljava/lang/String;II)Ljava/io/FileDescriptor;
+ * Signature: (Ljava/lang/String;III)Ljava/io/FileDescriptor;
  */
 JNIEXPORT jobject JNICALL Java_android_1serialport_1api_SerialPort_open
-  (JNIEnv *, jclass, jstring, jint, jint);
+  (JNIEnv *, jclass, jstring, jint, jint, jint);
 
 /*
  * Class:     android_serialport_api_SerialPort
